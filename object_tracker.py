@@ -32,7 +32,7 @@ metric = nn_matching.NearestNeighborDistanceMetric(
 tracker = Tracker(metric)
 
 # input video
-vid = cv2.VideoCapture('./data/videos/cars-1920x1080-30fps.mp4')
+vid = cv2.VideoCapture('./data/videos/street2-1920x1080.mp4')
 
 # output video
 codec = cv2.VideoWriter_fourcc(*'XVID')

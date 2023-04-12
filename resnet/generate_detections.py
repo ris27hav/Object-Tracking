@@ -51,7 +51,9 @@ def create_box_encoder(batch_size=32):
             image_patches.append(patch)
         
         # prepare the image patches for the feature extractor
-        image_patches = np.asarray(image_patches).transpose(0, 3, 1, 2)
+        if image_patches == []:
+            return np.array([])
+        image_patches = np.array(image_patches).transpose(0, 3, 1, 2)
         image_patches = image_patches.astype(np.float32) / 255.
 
         # extract the features
