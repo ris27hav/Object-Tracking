@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 # videos
+data/
 videos/
 *.mp4
 *.avi
