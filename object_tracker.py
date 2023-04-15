@@ -3,11 +3,10 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
-from resnet.encode_patches import create_box_encoder
+from embedding.encode_patches import create_box_encoder
 
-from yolo.model import load_model
-from yolo.inference import detect_objects
-from yolo.utils import convert_boxes_to_tlwh
+from detection.detr import load_model, get_classes, detect_objects
+from detection.utils import convert_boxes_to_tlwh
 
 from deep_sort.nn_matching import NearestNeighborDistanceMetric
 from deep_sort.preprocessing import non_max_suppression 
@@ -18,11 +17,11 @@ from deep_sort.tracker import Tracker
 MAX_COSINE_DISTANCE = 0.5
 NN_BUDGET = None
 NMS_MAX_OVERLAP = 0.8
-YOLO_VERSION = 8
-CLASSES_TO_DETECT = ['person', 'car', 'truck', 'bus']
+CLASSES_TO_DETECT = ['person', 'car',  'bus']  # Set to None to detect all classes
 
-# load yolo for object detection
-yolo = load_model('./yolov5/weights/yolov8s.pt', YOLO_VERSION)
+# load model for object detection
+class_names = get_classes()
+detection_model = load_model('./detection/weights/yolov8s.pt')
 
 # load resnet18 for feature extraction
 encoder = create_box_encoder(batch_size=32)
@@ -57,7 +56,7 @@ while True:
     t1 = time.time()
 
     # detect objects
-    boxes, scores, classes, names = detect_objects(yolo, img, YOLO_VERSION, CLASSES_TO_DETECT)
+    boxes, scores, classes, names = detect_objects(detection_model, img, class_names, CLASSES_TO_DETECT)
     total_detection_time += time.time() - t1
     t = time.time()
     
