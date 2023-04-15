@@ -31,7 +31,7 @@ def box_cxcywh_to_xyxy(x):
 
 def rescale_bboxes(out_bbox, size):
     """Rescales the bounding boxes from [0; 1] to image scales."""
-    img_w, img_h = size
+    img_h, img_w = size
     b = box_cxcywh_to_xyxy(out_bbox)
     b = b * torch.tensor([img_w, img_h, img_w, img_h], dtype=torch.float32)
     return b
@@ -57,13 +57,13 @@ def get_classes():
 
 def detect_objects(model, image, class_names, keep_classes=None):
     """Predicts the bounding boxes and class probabilities for a given image."""
-    image = preprocess(image)
-    output = model(image)
+    img = preprocess(image)
+    output = model(img)
 
-    # keep only predictions with 0.85+ confidence
+    # keep only predictions with 0.9+ confidence
     probas = output['pred_logits'].softmax(-1)[0, :, :-1]
-    keep = probas.max(-1).values > 0.85
-    bboxes_scaled = rescale_bboxes(output['pred_boxes'][0, keep], image.shape[-2:])
+    keep = probas.max(-1).values > 0.9
+    bboxes_scaled = rescale_bboxes(output['pred_boxes'][0, keep], image.shape[:2])
 
     boxes, scores, classes, names = [], [], [], []
     for p, bbox in zip(probas[keep], bboxes_scaled):

@@ -7,7 +7,7 @@ from embedding.encode_patches import create_box_encoder
 
 # change to detection.yolov5 if you want to use yolov5
 # or detection.detr if you want to use detr
-from detection.yolov8 import load_model, get_classes, detect_objects
+from detection.detr import load_model, get_classes, detect_objects
 from detection.utils import convert_boxes_to_tlwh
 
 from deep_sort.nn_matching import NearestNeighborDistanceMetric
