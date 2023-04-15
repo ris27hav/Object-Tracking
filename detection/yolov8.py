@@ -4,7 +4,6 @@ from ultralytics import YOLO
 def load_model(model_path):
     """Loads the yolov8 model from the path."""
     model = YOLO(model_path)
-    model.eval()
     return model
 
 def get_classes():
