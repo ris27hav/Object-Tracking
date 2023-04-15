@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 
 from embedding.encode_patches import create_box_encoder
 
+# change to detection.yolov5 if you want to use yolov5
+# or detection.detr if you want to use detr
 from detection.yolov8 import load_model, get_classes, detect_objects
 from detection.utils import convert_boxes_to_tlwh
 
@@ -21,7 +23,7 @@ CLASSES_TO_DETECT = ['person', 'car',  'bus']  # Set to None to detect all class
 
 # load model for object detection
 class_names = get_classes()
-detection_model = load_model('./detection/weights/yolov8n.pt')
+detection_model = load_model('./detection/weights/yolov8n.pt') # change to yolov5s.pt if you want to use yolov5
 
 # load resnet18 for feature extraction
 encoder = create_box_encoder(batch_size=32)
