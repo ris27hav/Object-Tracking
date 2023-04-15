@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from torchvision.models import resnet18     # resnet18 originally
+from torchvision.models import resnet18, ResNet18_Weights
 
 
 def get_name_to_module(model):
@@ -49,7 +49,7 @@ class BBResNet18(object):
         self.image_shape = (224, 224)
         self.batch_size = batch_size
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.model = resnet18(pretrained=True)
+        self.model = resnet18(weights=ResNet18_Weights.DEFAULT)
         self.model.eval()
         self.model = ModelWrapper(self.model, ['avgpool'], True)
         self.model.eval()

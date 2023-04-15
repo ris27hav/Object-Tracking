@@ -1,9 +1,9 @@
 import numpy as np
 from ultralytics import YOLO
 
-def load_model(model_path):
+def load_model():
     """Loads the yolov8 model from the path."""
-    model = YOLO(model_path)
+    model = YOLO('yolov8n.pt')
     return model
 
 def get_classes():

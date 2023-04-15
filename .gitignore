@@ -133,3 +133,6 @@ data/
 videos/
 *.mp4
 *.avi
+
+# models
+*.pt
