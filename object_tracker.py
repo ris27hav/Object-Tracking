@@ -2,12 +2,15 @@ import cv2
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-
+from PIL import Image
 from resnet.generate_detections import create_box_encoder
 
 from yolov5.model import load_model
 from yolov5.inference import detect_objects
 from yolov5.utils import convert_boxes_to_tlwh
+
+
+from detr.inference import *
 
 from deep_sort import nn_matching
 from deep_sort import preprocessing
@@ -21,6 +24,11 @@ NMS_MAX_OVERLAP = 0.8
 
 # load yolov5 for object detection
 yolo = load_model('./yolov5/weights/yolov5s.pt')
+detr = DETRdemo(num_classes=91)
+state_dict = torch.hub.load_state_dict_from_url(
+    url='https://dl.fbaipublicfiles.com/detr/detr_demo-da2a99e9.pth',
+    map_location='cpu', check_hash=True)
+detr.load_state_dict(state_dict)
 
 # load resnet18 for feature extraction
 encoder = create_box_encoder(batch_size=32)
@@ -32,7 +40,7 @@ metric = nn_matching.NearestNeighborDistanceMetric(
 tracker = Tracker(metric)
 
 # input video
-vid = cv2.VideoCapture('./data/videos/street2-1920x1080.mp4')
+vid = cv2.VideoCapture('test.mp4')
 
 # output video
 codec = cv2.VideoWriter_fourcc(*'XVID')
@@ -51,9 +59,23 @@ while True:
     t1 = time.time()
 
     # detect objects
-    boxes, scores, classes, names = detect_objects(yolo, img)
+    # boxes, scores, classes, names = detect_objects(yolo, img)
+
+    # print the shape of the output
+    # print(boxes.shape, scores.shape, classes.shape, names.shape)
+
+    try:
+        boxes, scores, classes, names = final_detect(img,detr,transform)
     
+    except:
+        # img=Image.fromarray(img)
+        # print(img1.size)
+        # print(img.shape)
+        boxes, scores, classes, names = final_detect(img,detr,transform)
     # encode detected objects
+
+    # print(boxes.shape, scores.shape, classes.shape, names.shape)
+
     converted_boxes = convert_boxes_to_tlwh(boxes)
     features = encoder(img, converted_boxes)
 
