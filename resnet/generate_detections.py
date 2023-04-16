@@ -15,7 +15,7 @@ def extract_image_patch(image, bbox, patch_shape=None):
 
     # convert to top left, bottom right
     bbox[2:] += bbox[:2]
-    bbox = bbox.astype(np.int)
+    bbox = bbox.astype(int)
 
     # clip at image boundaries
     bbox[:2] = np.maximum(0, bbox[:2])
@@ -51,9 +51,7 @@ def create_box_encoder(batch_size=32):
             image_patches.append(patch)
         
         # prepare the image patches for the feature extractor
-        if image_patches == []:
-            return np.array([])
-        image_patches = np.array(image_patches).transpose(0, 3, 1, 2)
+        image_patches = np.asarray(image_patches).transpose(0, 3, 1, 2)
         image_patches = image_patches.astype(np.float32) / 255.
 
         # extract the features

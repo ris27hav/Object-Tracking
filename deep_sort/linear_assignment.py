@@ -44,12 +44,14 @@ def min_cost_matching(
         * A list of unmatched detection indices.
 
     """
+  #  print("min_cost_matching")
     if track_indices is None:
         track_indices = np.arange(len(tracks))
     if detection_indices is None:
         detection_indices = np.arange(len(detections))
 
     if len(detection_indices) == 0 or len(track_indices) == 0:
+      #  print("No detections or tracks to match.")
         return [], track_indices, detection_indices  # Nothing to match.
 
     cost_matrix = distance_metric(
@@ -72,7 +74,7 @@ def min_cost_matching(
             unmatched_tracks.append(track_idx)
             unmatched_detections.append(detection_idx)
         else:
-            matches.append((track_idx, detection_idx))
+            matches.append((track_idx, detection_idx, cost_matrix[row, col]))
     return matches, unmatched_tracks, unmatched_detections
 
 
@@ -115,6 +117,7 @@ def matching_cascade(
         * A list of unmatched detection indices.
 
     """
+    cost_mat = None
     if track_indices is None:
         track_indices = list(range(len(tracks)))
     if detection_indices is None:
@@ -133,12 +136,12 @@ def matching_cascade(
         if len(track_indices_l) == 0:  # Nothing to match at this level
             continue
 
-        matches_l, _, unmatched_detections = \
+        matches_l, _, unmatched_detections,  = \
             min_cost_matching(
                 distance_metric, max_distance, tracks, detections,
                 track_indices_l, unmatched_detections)
         matches += matches_l
-    unmatched_tracks = list(set(track_indices) - set(k for k, _ in matches))
+    unmatched_tracks = list(set(track_indices) - set(k for k, _, __ in matches))
     return matches, unmatched_tracks, unmatched_detections
 
 

@@ -5,4 +5,3 @@ def load_model(model_path):
     model = torch_hub_load('ultralytics/yolov5', 'custom',
                            path=model_path, verbose=False)
     return model
-

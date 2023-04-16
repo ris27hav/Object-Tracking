@@ -64,15 +64,20 @@ class Track:
     """
 
     def __init__(self, mean, covariance, track_id, n_init, max_age,
-                 feature=None, class_name=None):
+                 feature=None, class_name=None,starting_prob = 0.35, hurdle_1 = 0.1, hurdle_2 = 0.25,conf_param = 0.90,decay_param = 0.975):
         self.mean = mean
         self.covariance = covariance
         self.track_id = track_id
         self.hits = 1
         self.age = 1
         self.time_since_update = 0
+        self.conf_param = conf_param
 
         self.state = TrackState.Tentative
+        self.prob = starting_prob
+        self.hurdle_1 = hurdle_1
+        self.hurdle_2 = hurdle_2
+        self.decay_param = decay_param
         self.features = []
         if feature is not None:
             self.features.append(feature)
@@ -112,7 +117,14 @@ class Track:
     
     def get_class(self):
         return self.class_name
-
+    def update_state(self):
+   #     print("prob: ", self.prob)
+        if self.prob > self.hurdle_2:
+            self.state = TrackState.Confirmed
+        elif self.prob > self.hurdle_1:
+            self.state = TrackState.Tentative
+        else:
+            self.state = TrackState.Deleted
     def predict(self, kf):
         """Propagate the state distribution to the current time step using a
         Kalman filter prediction step.
@@ -127,7 +139,7 @@ class Track:
         self.age += 1
         self.time_since_update += 1
 
-    def update(self, kf, detection):
+    def update(self, kf, detection, cost):
         """Perform Kalman filter measurement update step and update the feature
         cache.
 
@@ -145,18 +157,20 @@ class Track:
 
         self.hits += 1
         self.time_since_update = 0
-        if self.state == TrackState.Tentative and self.hits >= self._n_init:
-            self.state = TrackState.Confirmed
+       # print("conf_param: ", self.conf_param)
+      #  print(self.prob)
+        self.prob = self.prob*self.conf_param + (1-cost) * (1 - self.conf_param)
+     #   print("prob: ", self.prob)
+        self.update_state()
 
     def mark_missed(self):
         """Mark this track as missed (no association at the current time step).
         """
-        if self.state == TrackState.Tentative:
-            self.state = TrackState.Deleted
-        elif self.time_since_update > self._max_age:
-            self.state = TrackState.Deleted
+        self.update_state()
+        self.prob = self.prob * self.decay_param
 
     def is_tentative(self):
+
         """Returns True if this track is tentative (unconfirmed).
         """
         return self.state == TrackState.Tentative

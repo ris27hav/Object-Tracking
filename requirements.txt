@@ -74,6 +74,12 @@ six==1.16.0
 smmap==5.0.0
 stack-data==0.6.2
 sympy==1.11.1
+tensorboard==2.12.1
+tensorboard-data-server==0.7.0
+tensorboard-plugin-wit==1.8.1
+tensorflow-estimator==2.12.0
+tensorflow-intel==2.12.0
+tensorflow-io-gcs-filesystem==0.31.0
 termcolor==2.2.0
 tf-slim==1.1.0
 thop==0.1.1.post2209072238
