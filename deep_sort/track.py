@@ -63,6 +63,10 @@ class Track:
 
     """
 
+    flag = 0
+
+    alpha = 0.8
+
     def __init__(self, mean, covariance, track_id, n_init, max_age,
                  feature=None, class_name=None):
         self.mean = mean
@@ -142,6 +146,12 @@ class Track:
         self.mean, self.covariance = kf.update(
             self.mean, self.covariance, detection.to_xyah())
         self.features.append(detection.feature)
+        # if self.flag==0:
+        #     self.features.append(detection.feature)
+        #     self.flag=1
+        # else:
+        #     detection.feature = self.alpha * detection.feature + (1 - self.alpha) * self.features[-1]
+        #     self.features.append(detection.feature)
 
         self.hits += 1
         self.time_since_update = 0

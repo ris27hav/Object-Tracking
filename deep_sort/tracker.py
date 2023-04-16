@@ -6,6 +6,7 @@ from . import linear_assignment
 from . import iou_matching
 from .track import Track
 
+flag = 0
 
 class Tracker:
     """

@@ -35,7 +35,7 @@ metric = NearestNeighborDistanceMetric(
 tracker = Tracker(metric)
 
 # input video
-vid = cv2.VideoCapture('./data/videos/MOT17-12-FRCNN-raw.webm')
+vid = cv2.VideoCapture('./test.mp4')
 
 # output video
 codec = cv2.VideoWriter_fourcc(*'XVID')
@@ -83,6 +83,7 @@ while True:
     # update tracker
     tracker.predict()
     tracker.update(detections)
+
     total_tracking_time += time.time() - t
     total_time += time.time() - t1
 
@@ -127,3 +128,7 @@ print('Encoding Time: {:.3f}'.format(total_encoding_time))
 print('NMS Time: {:.3f}'.format(total_nms_time))
 print('Tracking Time: {:.3f}'.format(total_tracking_time))
 print('Total Time: {:.3f}'.format(total_time))
+
+
+
+
