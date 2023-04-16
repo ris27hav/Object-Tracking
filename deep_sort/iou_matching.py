@@ -3,7 +3,20 @@ from __future__ import absolute_import
 import numpy as np
 from . import linear_assignment
 
-
+def penalty_factor(bbox, candidates):
+    """Returns a penalty factor for the matching cost.
+    Inputs and outputs are the same as for `iou_cost`.
+    """
+    candidate_heights = candidates[:, 3]
+    candidate_heights = np.maximum(candidate_heights, 1e-6)
+    bbox_height = bbox[3]
+    bbox_height = np.maximum(bbox_height, 1e-6)
+    candidate_widths = candidates[:, 2]
+    candidate_widths = np.maximum(candidate_widths, 1e-6)
+    bbox_width = bbox[2]
+    bbox_width = np.maximum(bbox_width, 1e-6)
+    penalty = np.maximum(candidate_heights / bbox_height, bbox_height / candidate_heights) + np.maximum(candidate_widths / bbox_width, bbox_width / candidate_widths)
+    return penalty
 def iou(bbox, candidates):
     """Computer intersection over union.
 
@@ -36,7 +49,8 @@ def iou(bbox, candidates):
     area_intersection = wh.prod(axis=1)
     area_bbox = bbox[2:].prod()
     area_candidates = candidates[:, 2:].prod(axis=1)
-    return area_intersection / (area_bbox + area_candidates - area_intersection)
+    iou = area_intersection / (area_bbox + area_candidates - area_intersection)
+    return iou
 
 
 def iou_cost(tracks, detections, track_indices=None,
@@ -77,5 +91,5 @@ def iou_cost(tracks, detections, track_indices=None,
 
         bbox = tracks[track_idx].to_tlwh()
         candidates = np.asarray([detections[i].tlwh for i in detection_indices])
-        cost_matrix[row, :] = 1. - iou(bbox, candidates)
+        cost_matrix[row, :] = 1. - (iou(bbox, candidates)/penalty_factor(bbox, candidates))
     return cost_matrix
