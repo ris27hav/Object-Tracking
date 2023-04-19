@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from embedding.feature_extractor import BBResNet18
+from .feature_extractor import BBResNet18
 
 
 def extract_image_patch(image, bbox, patch_shape=None):
