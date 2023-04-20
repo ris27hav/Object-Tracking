@@ -66,6 +66,6 @@ def motMetricsEnhancedCalculator(gtSource, tSource):
   )
   print(strsummary)
   
-s= "./data/MOT16/train/MOT16-09/gt/"
-remove_low_visibility()
+# s= "./data/MOT16/train/MOT16-09/gt/"
+# remove_low_visibility()
 # motMetricsEnhancedCalculator("./data/MOT16/train/MOT16-09/gt/gt.txt", "./detections.txt")

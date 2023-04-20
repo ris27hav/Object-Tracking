@@ -34,6 +34,7 @@ CLASS_DICT = {
 # load model for object detection
 class_names = get_classes()
 detection_model = load_model()
+# yolo = load_model('./yolov5/runs/train/outnew/best.pt')
 
 # load resnet18 for feature extraction
 encoder = create_box_encoder(batch_size=32)
@@ -45,7 +46,7 @@ metric = NNDistanceMetric(
 tracker = Tracker(metric)
 
 # input video
-vid_path = "./data/videos/cars-1920x1080-30fps.mp4"
+vid_path = "./data/test.mp4"
 vid = cv2.VideoCapture(vid_path)
 
 # output video
