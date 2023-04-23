@@ -1,6 +1,7 @@
 import cv2
 import time
 import numpy as np
+import torch
 import matplotlib.pyplot as plt
 from extras.stats import stats 
 from yolov5.inference import detect_objects
@@ -23,13 +24,27 @@ METRIC_TYPE = 'cosine'      # cosine or euclidean
 MATCHING_THRESHOLD = 0.3
 NMS_MAX_OVERLAP = 0.8
 CLASSES_TO_DETECT = ['person', 'car',  'bus']  # Set to None to detect all classes
+# CLASS_DICT = {
+#     'person': 1,
+#     'car': 3,
+#     'bus': 4,
+#     'motorcycle': 5,
+#     'Non-motorized vehicle': 6,
+#     'Person': 7,
+#     'Distractor': 8,
+#     'Occluder': 9,
+#     'Occluder on the ground': 10,
+#     'Occluder full': 11,
+#     'Reflection': 12
+# }
 CLASS_DICT = {
-    'person': 1,
-    'car': 3,
-    'bus': 4,
-    'motorcycle': 5,
+    'Pedestrian': 1,
+    'Person on vehicle': 2,
+    'Car': 3,
+    'Bicycle': 4,
+    'Motorbike': 5,
     'Non-motorized vehicle': 6,
-    'Person': 7,
+    'Static person': 7,
     'Distractor': 8,
     'Occluder': 9,
     'Occluder on the ground': 10,
@@ -40,7 +55,10 @@ CLASS_DICT = {
 # load model for object detection
 # class_names = get_classes()
 # detection_model = load_model()
+
 detection_model = load_model('./yolov5/runs/train/outnew/best.pt')
+device = "mps" if torch.backends.mps.is_available() else "cpu"
+detection_model.to(device)
 
 # load resnet18 for feature extraction
 encoder = create_box_encoder(batch_size=32)
@@ -56,8 +74,8 @@ tracker = Tracker(metric)
 # vid = cv2.VideoCapture(vid_path)
 file_to_delete = open("detections.txt",'w')
 file_to_delete.close()
-vid_path = "./data/MOT16-10/img1/"
-gt_path = "./data/MOT16-10/gt/gt.txt"
+vid_path = "data/MOT16/train/MOT16-02/img1/"
+gt_path = "data/MOT16/train/MOT16-02/gt/gt.txt"
 
 
 # output video
@@ -145,8 +163,7 @@ while True:
             class_name = track.get_class()
             color = colors[int(track.track_id) % len(colors)]
             color = [i * 255 for i in color]
-            # f.write("{},{},{:.2f},{:.2f},{:.2f},{:.2f},{},{},{}\n".format(num, track.track_id, bbox[0], bbox[1], bbox[2]-bbox[0], bbox[3]-bbox[1], -1, class_dict1[class_name], -1))
-
+            f.write("{},{},{:.2f},{:.2f},{:.2f},{:.2f},{},{},{}\n".format(num, track.track_id, bbox[0], bbox[1], bbox[2]-bbox[0], bbox[3]-bbox[1], -1, CLASS_DICT[class_name], -1))
             cv2.rectangle(img, (int(bbox[0]),int(bbox[1])), (int(bbox[2]),int(bbox[3])), color, 2)
             cv2.rectangle(img, (int(bbox[0]), int(bbox[1]-30)), (int(bbox[0])+(len(class_name)
                         +len(str(track.track_id)))*17, int(bbox[1])), color, -1)
