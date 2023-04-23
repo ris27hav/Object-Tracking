@@ -68,4 +68,4 @@ def motMetricsEnhancedCalculator(gtSource, tSource):
   
 # s= "./data/MOT16/train/MOT16-09/gt/"
 # remove_low_visibility()
-# motMetricsEnhancedCalculator("./data/MOT16/train/MOT16-09/gt/gt.txt", "./detections.txt")
+# motMetricsEnhancedCalculator("../data/MOT16/train/MOT16-02/gt/gt.txt", "../detections.txt")
